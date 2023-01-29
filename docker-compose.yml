@@ -1,0 +1,7 @@
+version: '3.7'
+services:
+  dtack-base-cpp:
+    image: dtack-base-cpp
+    container_name: dtack-base-cpp
+    build: .
+    tty: true

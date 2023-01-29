@@ -1,0 +1,1 @@
+BITNESS       = -m64
