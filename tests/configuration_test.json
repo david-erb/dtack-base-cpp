@@ -1,0 +1,27 @@
+{
+    "axis1":
+    {
+        "waveform_generator_instance_name": "waveform_generator_ramp_c",
+        "first_position": 0.0,
+        "final_position": 100.0,
+        "duration_seconds": 1000.0,
+        "clock_period_seconds": 100.0,
+
+        "expect":
+        {
+            "count": 11,
+            "final_position": 100.0,
+            "final_timestamp": 1000.0
+        }
+    },
+    "axis2":
+    {
+        "waveform_generator_instance_name": "waveform_generator_fixed_class",
+        "position": 0.0
+    },
+    "axis3":
+    {
+        "waveform_generator_instance_name": "waveform_generator_fixed_class",
+        "position": 0.0
+    }
+}

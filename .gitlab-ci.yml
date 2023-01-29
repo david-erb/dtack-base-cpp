@@ -1,0 +1,70 @@
+stages:
+  - Test
+  - Build Testing RPM
+  - Publish Testing RPM
+  - Install Testing RPM
+  - Publish Public RPM
+  - Install Public RPM
+
+unit_test:
+  image: docker.dtack.com/centos7-build:latest
+  type: Test
+  script:
+    - make
+    # The gitlab_ci_tests will add their stderr outputs to a single file.
+    - make gitlab_ci_tests
+    # Check if any test has emitted anything to stderr.
+    - "if [ -s gitlab_ci_tests.stderr ]; then cat gitlab_ci_tests.stderr && false; else echo 'no stderr output from tests' || true; fi"
+  tags: [docker]
+  only:
+    - branches
+
+build_testing:
+  image: docker.dtack.com/centos7-build:latest
+  type: Build Testing RPM
+  script:
+    - make build_rpm
+  artifacts:
+    paths:
+      - ./RPMS/*.rpm
+    expire_in: 1 week
+  tags: [docker]
+  only:
+    - develop
+    - master
+
+publish_testing:
+  type: Publish Testing RPM
+  script:
+    - make gitlab_ci_publish_testing
+  tags: [cinode-0]
+  only:
+    - develop
+
+install_testing:
+  image: docker.dtack.com/centos7-build:latest
+  type: Install Testing RPM
+  script:
+    - yum -y install dtack-base-cpp --disablerepo=dtack-public --enablerepo=dtack-testing
+    - lib-dtack-base-test-00-version
+  tags: [docker]
+  only:
+    - develop
+
+publish_public:
+  type: Publish Public RPM
+  script:
+    - make gitlab_ci_publish_public
+  tags: [cinode-0]
+  only:
+    - master
+
+install_public:
+  image: docker.dtack.com/centos7-build:latest
+  type: Install Public RPM
+  script:
+    - yum -y install dtack-base-cpp --enablerepo=dtack-public --disablerepo=dtack-testing
+    - lib-dtack-base-test-00-version
+  tags: [docker]
+  only:
+    - master
